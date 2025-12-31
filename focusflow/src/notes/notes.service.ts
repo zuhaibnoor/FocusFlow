@@ -1,46 +1,45 @@
 import { Injectable } from '@nestjs/common';
-
-
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { note } from './note.entity';
 
 @Injectable()
 export class NotesService {
-    private notes: any[] = []
+  constructor(
+    @InjectRepository(note)
+    private readonly notesRepository: Repository<note>,
+  ) {}
 
-    private idCounter = 1
+  async create(title: string, content: string) {
+    const note = this.notesRepository.create({
+      title,
+      content,
+      isCompleted: false,
+    });
 
-    create(title: string, content: string){
-        const note = {
-            id: this.idCounter++,
-            title,
-            content,
-            isCompleted: false,
-        };
+    return this.notesRepository.save(note);
+  }
 
-        this.notes.push(note)
-        return this.notes;
-    }
+  async findAll() {
+    return this.notesRepository.find();
+  }
 
-    findAll(){
-        return this.notes;
-    }
+  async findOne(id: number) {
+    return this.notesRepository.findOneBy({ id });
+  }
 
-    findOne(id: number){
-        return this.notes.find(note => note.id === id);
-    }
+  async update(id: number, title: string, content: string) {
+    const note = await this.findOne(id);
+    if (!note) return null;
 
-    update(id:number, title: string, content:string){
-        const note = this.findOne(id);
-        if(note){
-            note.title = title;
-            note.content = content;
-            return note;
-        }
-    }
+    note.title = title;
+    note.content = content;
 
-    delete(id:number){
-        this.notes = this.notes.filter(note => note.id !== id);
-        return this.notes;
-    }
+    return this.notesRepository.save(note);
+  }
 
-    
+  async delete(id: number) {
+    await this.notesRepository.delete(id);
+    return this.findAll();
+  }
 }

@@ -1,10 +1,57 @@
+// import { Module } from '@nestjs/common';
+// import { AppController } from './app.controller';
+// import { AppService } from './app.service';
+// import { NotesModule } from './notes/notes.module';
+// import { TypeOrmModule } from '@nestjs/typeorm';
+// import { ConfigModule } from '@nestjs/config';
+
+// @Module({
+//   ConfigModule.forRoot({
+//       isGlobal: true, // makes env available everywhere
+//     }),
+//   imports: [NotesModule,
+//     TypeOrmModule.forRoot({
+//       type: 'postgres',
+//       host: process.env.DB_HOST,
+//       port: Number(process.env.DB_PORT),
+//       username: process.env.DB_USERNAME,
+//       password: String(process.env.DB_PASSWORD),
+//       database: process.env.DB_NAME,
+//       synchronize: true,
+//       autoLoadEntities: true,
+//     })
+//   ],
+//   controllers: [AppController],
+//   providers: [AppService],
+// })
+// export class AppModule {}
+
+
+
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { NotesModule } from './notes/notes.module';
 
 @Module({
-  imports: [NotesModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // makes env available everywhere
+    }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      synchronize: true,
+      autoLoadEntities: true,
+    }),
+    NotesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
