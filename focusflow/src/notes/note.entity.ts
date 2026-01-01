@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { User } from 'src/users/users.entity';
 
 @Entity()
 export class note {
@@ -13,5 +14,9 @@ export class note {
 
     @Column({ default: false })
     isCompleted: boolean;
+
+    @ManyToOne(()=>User, user => user.notes)
+    user: User;
+
 }
 
