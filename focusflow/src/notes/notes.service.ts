@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { note } from './note.entity';
+
+
 
 @Injectable()
 export class NotesService {
@@ -30,7 +32,9 @@ export class NotesService {
 
   async update(id: number, title: string, content: string) {
     const note = await this.findOne(id);
-    if (!note) return null;
+    if (!note) {
+      throw new NotFoundException(`Note with id: ${id}`)
+    };
 
     note.title = title;
     note.content = content;
